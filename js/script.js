@@ -20,12 +20,13 @@ function showPage() {
    const arrayLi = arrayGetter();
 
    //first load for first 10 names
-   pageSwap(0);
+   pageSwap(0, arrayLi);
+   createSearch(ul);
    appendPageLinks(arrayLi, ul);
 }
 
-function pageSwap(start) {
-   const arrayLi = arrayGetter();
+function pageSwap(start = 0, arrayLi = arrayGetter()) {
+   
    let finish = start + 9;
 
    arrayLi.forEach((item, index) => {
@@ -39,12 +40,12 @@ function pageSwap(start) {
 }
 
 function appendPageLinks(arrayLi, studentList) {
-   const pageUl = document.createElement('ul');
+   const ul = document.createElement('ul');
 
-   insertAfter(pageUl, studentList);
-   pageUl.className = 'pagination';
+   insertAfter(ul, studentList);
+   ul.className = 'pagination';
 
-   createLi(arrayLi, pageUl);
+   createLi(arrayLi, ul);
 
 }
 
@@ -61,17 +62,78 @@ function createLi(arrayLi, ul) {
       ul.append(li);
    }
 }
+//create search box
 
+function createSearch() {
+   const h2 = document.querySelector('h2');
+   const form = document.createElement('form');
+   const input = document.createElement('input');
+   const button = document.createElement('button');
+
+   insertAfter(form, h2);
+   form.className = "student-search";
+   button.innerText = "Search";
+   form.appendChild(input);
+   form.appendChild(button);
+   input.setAttribute('placeholder', 'Search');
+   input.setAttribute('id', 'search-input');
+   input.type = 'text';
+}
+
+//have pagination change based on page clicked
 document.addEventListener('click', (e) => {
+   
    //target only a hrefs with mouse click, then target only page number classes. This was done to avoid globals.
    if(e.target.nodeName === "A") {
       if(e.target.parentNode.parentNode.classList.contains('pagination')) {
          //takes the page number, minuses 1 to start at 0, then multiply by 10 to get starting index.
+         console.log(e)
          let start = (parseInt(e.target.innerText) - 1) * 10;
+         //value passes through to default array, hence clicking a page number after search goes by default
          pageSwap(start);
       }
    }
-})
+});
+
+document.addEventListener('keyup', (e) => {
+   e.preventDefault();
+
+   const input = document.getElementById('search-input');
+   const searchVal = input.value.toLowerCase();
+   const arrayLi = arrayGetter();
+   const searchResults = [];
+
+   let count = 0;
+   //put search results into an array
+   arrayLi.forEach((li) => {
+      if(li.innerText.toLowerCase().indexOf(searchVal) === -1){
+         li.style.display = 'none';
+      }
+      if(li.innerText.toLowerCase().indexOf(searchVal) !== -1){
+         searchResults.push(li);
+         if(count <= 9){
+            li.style.display = 'block';
+         }
+         count++;
+      }
+   });
+   pageSwap(0, searchResults);
+   paginationDisplay(count);
+});
+
+function paginationDisplay(num) {
+   const ul = document.querySelector('.pagination');
+   const liList = [...ul.children];
+   let numOfLinks = Math.ceil(num / 10);
+   //will show proper number of pages, however, page 2 and beyond will not be the correct search results
+   liList.forEach((li, index) => {
+      if (index < numOfLinks){
+         li.style.display ='';
+      } else {
+         li.style.display = 'none';
+      }
+   });
+}
 
 //helper function to insertAfter, which is not a vanilla method
 //reference: https://plainjs.com/javascript/manipulation/insert-an-element-after-or-before-another-32/

@@ -5,9 +5,10 @@ FSJS project 2 - List Filter and Pagination
    
 // Study guide for this project - https://drive.google.com/file/d/1OD1diUsTMdpfMDv677TfL1xO2CEkykSz/view?usp=sharing
 
+
 showPage();
 
-//in an effort to do this with NO globals, I created this helper function which retrieves the DOMTokenList array-like-object and turns it as an array.
+//in an effort to do this with NO globals, I created this helper function which retrieves the HTMLcollection array-like-object and turns it as an array.
 function arrayGetter() {
    const ul = document.querySelector('.student-list');
    const arrayLi = [...ul.children];
@@ -28,7 +29,7 @@ function showPage() {
 function pageSwap(start = 0, arrayLi = arrayGetter()) {
    
    let finish = start + 9;
-
+   console.log(searchResults)
    arrayLi.forEach((item, index) => {
       //do not display any people outside of the range selected, and toggle back
       if (index < start || index > finish) {
@@ -82,41 +83,43 @@ function createSearch() {
 
 //have pagination change based on page clicked
 document.addEventListener('click', (e) => {
-   
    //target only a hrefs with mouse click, then target only page number classes. This was done to avoid globals.
    if(e.target.nodeName === "A") {
-      if(e.target.parentNode.parentNode.classList.contains('pagination')) {
+      if(e.target.parentNode.parentNode.classList.contains('pagination') && !e.target.parentNode.parentNode.classList.contains('search-submitted')) {
          //takes the page number, minuses 1 to start at 0, then multiply by 10 to get starting index.
-         console.log(e)
          let start = (parseInt(e.target.innerText) - 1) * 10;
          //value passes through to default array, hence clicking a page number after search goes by default
          pageSwap(start);
+      } else {
+         let start = (parseInt(e.target.innerText) - 1) * 10;
+         pageSwap(start, searchResults);
       }
    }
 });
 
 document.addEventListener('keyup', (e) => {
    e.preventDefault();
-
+   
    const input = document.getElementById('search-input');
    const searchVal = input.value.toLowerCase();
    const arrayLi = arrayGetter();
-   const searchResults = [];
-
+   const searched = [];
    let count = 0;
+   
    //put search results into an array
    arrayLi.forEach((li) => {
       if(li.innerText.toLowerCase().indexOf(searchVal) === -1){
          li.style.display = 'none';
       }
       if(li.innerText.toLowerCase().indexOf(searchVal) !== -1){
-         searchResults.push(li);
+         searched.push(li);
          if(count <= 9){
             li.style.display = 'block';
          }
          count++;
       }
    });
+   searchResults = searched;
    pageSwap(0, searchResults);
    paginationDisplay(count);
 });
@@ -125,6 +128,10 @@ function paginationDisplay(num) {
    const ul = document.querySelector('.pagination');
    const liList = [...ul.children];
    let numOfLinks = Math.ceil(num / 10);
+
+   if(numOfLinks < Math.ceil(arrayGetter().length / 10)){
+      ul.classList.add('search-submitted');
+   }
    //will show proper number of pages, however, page 2 and beyond will not be the correct search results
    liList.forEach((li, index) => {
       if (index < numOfLinks){

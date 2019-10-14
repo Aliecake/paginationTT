@@ -103,7 +103,6 @@ document.addEventListener('keyup', (e) => {
    const searchVal = input.value.toLowerCase();
    const arrayLi = arrayGetter();
    const searched = [];
-   let count = 0;
 
    arrayLi.forEach((li) => {
       if(li.innerText.toLowerCase().indexOf(searchVal) === -1) {
@@ -112,15 +111,12 @@ document.addEventListener('keyup', (e) => {
       //search results
       if(li.innerText.toLowerCase().indexOf(searchVal) !== -1) {
          searched.push(li);
-         if(count <= 9){
-            li.style.display = 'block';
-         }
-         count++;
+         
       }
    });
    searchResults = searched;
    pageSwap(0, searchResults);
-   paginationDisplay(count);
+   paginationDisplay(searched.length);
 });
 
 function paginationDisplay(num) {

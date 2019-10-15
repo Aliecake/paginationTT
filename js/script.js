@@ -126,25 +126,11 @@ document.addEventListener('keyup', (e) => {
          }
       }
    });
-
-   if (searchResults.length === 0){
-      noSearchResults();
-   }
    searchResults = searched;
    pageSwap(0, searched);
    paginationDisplay(searchResults.length);
 });
 
-function noSearchResults() {
-   let studentList = document.querySelector('.student-list');
-   let p = document.createElement('p');
-   //wont post multiple p during keyup listener
-   if (!document.querySelector('.no-results')) {
-      p.className = 'no-results';
-      p.textContent = "No Search Results found, try again";
-      insertAfter(p, studentList);
-   }
-}
 function paginationDisplay(num) {
    const ul = document.querySelector('.pagination');
    const liList = [...ul.children];
@@ -156,6 +142,10 @@ function paginationDisplay(num) {
    } else {
       ul.classList.remove('search-submitted');
    }
+   if (num === 0){
+      //no results after search
+      noSearchResults();
+   }
    //Show proper number of pages for li's
    liList.forEach((li, index) => {
       if (index < numOfLinks){
@@ -164,6 +154,17 @@ function paginationDisplay(num) {
          li.style.display = 'none';
       }
    });
+}
+
+function noSearchResults() {
+   let studentList = document.querySelector('.student-list');
+   let p = document.createElement('p');
+   //wont post multiple p during keyup listener
+   if (!document.querySelector('.no-results')) {
+      p.className = 'no-results';
+      p.textContent = "No Search Results found, try again";
+      insertAfter(p, studentList);
+   }
 }
 
 //helper function to insertAfter, which isnt included in Vanilla

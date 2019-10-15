@@ -101,6 +101,16 @@ document.addEventListener('keyup', (e) => {
    
    const input = document.getElementById('search-input');
    const searchVal = input.value.toLowerCase();
+   let searchResults= searchLis(searchVal);
+
+   if (searchResults.length === 0){
+      noSearchResults();
+   }
+   pageSwap(0, searchResults);
+   paginationDisplay(searchResults.length);
+});
+
+function searchLis(searchVal) {
    const arrayLi = arrayGetter();
    const searched = [];
 
@@ -111,20 +121,27 @@ document.addEventListener('keyup', (e) => {
       //search results
       if(li.innerText.toLowerCase().indexOf(searchVal) !== -1) {
          searched.push(li);
-         
       }
    });
-   searchResults = searched;
-   pageSwap(0, searchResults);
-   paginationDisplay(searched.length);
-});
+   return searched;
+}
 
+function noSearchResults() {
+   let studentList = document.querySelector('.student-list');
+   let p = document.createElement('p');
+   //wont post multiple p while user types more/deletes
+   if (!document.querySelector('.no-results')) {
+      p.className = 'no-results';
+      p.textContent = "No Search Results found, try again";
+      insertAfter(p, studentList);
+   }
+}
 function paginationDisplay(num) {
    const ul = document.querySelector('.pagination');
    const liList = [...ul.children];
    let numOfLinks = Math.ceil(num / 10);
 
-   //search reduces number of users below amount of original pages
+   //search results less than num of paginations needed
    if(numOfLinks < Math.ceil(arrayGetter().length / 10)){
       ul.classList.add('search-submitted');
    }

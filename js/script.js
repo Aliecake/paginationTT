@@ -52,10 +52,10 @@ function appendPageLinks(arrayLi, studentList) {
    const ul = document.createElement('ul');
 
    insertAfter(ul, studentList);
+   //giving the ul the class active state works for all li
    ul.className = 'pagination';
 
    createLi(arrayLi, ul);
-
 }
 
 
@@ -91,13 +91,13 @@ function createSearch() {
 
 document.addEventListener('click', (e) => {
    if(e.target.nodeName === "A") {
-      //targets only pagination links
+      //targets only pagination links prior to search
       if(e.target.parentNode.parentNode.classList.contains('pagination') && !e.target.parentNode.parentNode.classList.contains('search-submitted')) {
-         //takes the page number to get starting index.
+         //page number clicked to get starting index.
          let start = (parseInt(e.target.innerText) - 1) * 10;
          pageSwap(start);
       } else {
-         //if click is after a search, use searched array instead of default
+         //if click is after a search, use searched results
          let start = (parseInt(e.target.innerText) - 1) * 10;
          pageSwap(start, searchResults);
       }
@@ -121,7 +121,7 @@ document.addEventListener('keyup', (e) => {
          let p = document.querySelector('.no-results');
          searched.push(li);
          //removes message when user deletes search query
-         if (p){
+         if (p) {
             p.remove();
          }
       }
@@ -138,7 +138,7 @@ document.addEventListener('keyup', (e) => {
 function noSearchResults() {
    let studentList = document.querySelector('.student-list');
    let p = document.createElement('p');
-   //wont post multiple p while user types more/deletes
+   //wont post multiple p during keyup listener
    if (!document.querySelector('.no-results')) {
       p.className = 'no-results';
       p.textContent = "No Search Results found, try again";

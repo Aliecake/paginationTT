@@ -117,7 +117,6 @@ document.addEventListener('click', (e) => {
          let start = (parseInt(e.target.innerText) - 1) * 10;
          pageSwap(start);
       } else {
-         //if click is after a search, use searched results
          let start = (parseInt(e.target.innerText) - 1) * 10;
          pageSwap(start, searchResults);
       }

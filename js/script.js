@@ -47,9 +47,8 @@ function createLi(arrayLi, ul) {
    //determine how many page links are needed based on length of list
    let numOfLinks = Math.ceil(arrayLi.length / 10);
 
-   for (let ii = 0; ii < numOfLinks; ii++){
-      let pageNum = ii + 1;
-      const li = createElement('li', 'innerHTML', `<a href="#">${pageNum}</a>`);
+   for (let ii = 1; ii <= numOfLinks; ii++){
+      const li = createElement('li', 'innerHTML', `<a href="#">${ii}</a>`);
       ul.append(li);
    }
 }
@@ -74,33 +73,19 @@ function paginationDisplay(num) {
    const liList = [...ul.children];
    let numOfLinks = Math.ceil(num / 10);
 
-   //search results less than num of paginations needed
-   if(numOfLinks < Math.ceil(arrayGetter().length / 10)){
-      ul.classList.add('search-submitted');
-   } else {
-      ul.classList.remove('search-submitted');
-   }
-   if (num === 0){
-      //no results after search
-      noSearchResults();
-   }
+   //had the user searched
+   numOfLinks !== Math.ceil(arrayGetter().length / 10)? ul.classList.add('search-submitted') : ul.classList.remove('search-submitted');
+   //no results after search
+   num === 0? noSearchResults() : '';
    //Show proper number of pages for li's
-   liList.forEach((li, index) => {
-      if (index < numOfLinks){
-         li.style.display ='';
-      } else {
-         li.style.display = 'none';
-      }
-   });
+   liList.forEach((li, index) => index < numOfLinks? li.style.display ='' : li.style.display = 'none');
 }
 
 function noSearchResults() {
    let studentList = document.querySelector('.student-list');
    let p = createElement('p', 'className', 'text-block');
    //wont post multiple p during keyup listener
-   if (!document.querySelector('.no-results')) {
-      fillNoResults(p, studentList);
-   }
+   !document.querySelector('.no-results')? fillNoResults(p, studentList): '';
 }
 function fillNoResults(p, studentList) {
    p.classList.add('no-results');
@@ -111,8 +96,10 @@ function fillNoResults(p, studentList) {
 
 document.addEventListener('click', (e) => {
    if(e.target.nodeName === "A") {
+      const targetUlClass = e.target.parentNode.parentNode.classList;
+
       //targets only pagination links prior to search
-      if(e.target.parentNode.parentNode.classList.contains('pagination') && !e.target.parentNode.parentNode.classList.contains('search-submitted')) {
+      if(targetUlClass.contains('pagination') && !targetUlClass.contains('search-submitted')) {
          //page number clicked to get starting index.
          let start = (parseInt(e.target.innerText) - 1) * 10;
          pageSwap(start);

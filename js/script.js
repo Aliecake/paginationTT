@@ -37,7 +37,7 @@ function showPage() {
 //This shows the 10 users per page
 function pageSwap(start = 0, arrayLi = arrayGetter()) {
    let finish = start + 9;
-   console.log('pageswap firing', start, arrayLi)
+
    arrayLi.forEach((item, index) => {
       //hides those outside of range selected
       if (index < start || index > finish) {
@@ -99,7 +99,6 @@ document.addEventListener('click', (e) => {
       } else {
          //if click is after a search, use searched array instead of default
          let start = (parseInt(e.target.innerText) - 1) * 10;
-         console.log(searchResults)
          pageSwap(start, searchResults);
       }
    }

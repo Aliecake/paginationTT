@@ -99,12 +99,14 @@ function noSearchResults() {
    let p = createElement('p', 'className', 'text-block');
    //wont post multiple p during keyup listener
    if (!document.querySelector('.no-results')) {
-      p.classList.add('no-results');
-      p.textContent = "No Search Results found, try again";
-      insertAfter(p, studentList);
+      fillNoResults(p, studentList);
    }
 }
-
+function fillNoResults(p, studentList) {
+   p.classList.add('no-results');
+   p.textContent = "No Search Results found, try again";
+   insertAfter(p, studentList);
+}
 ///////// EVENT LISTENERS //////////
 
 document.addEventListener('click', (e) => {
@@ -131,23 +133,27 @@ document.addEventListener('keyup', (e) => {
    const arrayLi = arrayGetter();
 
    arrayLi.forEach((li) => {
-      if(li.innerText.toLowerCase().indexOf(searchVal) === -1) {
-         li.style.display = 'none';
-      }
-      //search results
-      if(li.innerText.toLowerCase().indexOf(searchVal) !== -1) {
-         let p = document.querySelector('.no-results');
-         searched.push(li);
-         //removes message when user deletes search query
-         if (p) {
-            p.remove();
-         }
-      }
+      handleResults(li, searchVal, searched);
    });
    searchResults = searched;
    pageSwap(0, searched);
    paginationDisplay(searchResults.length);
 });
+
+function handleResults(li, searchVal, searched) {
+   if(li.innerText.toLowerCase().indexOf(searchVal) === -1) {
+      li.style.display = 'none';
+   }
+   //search results
+   if(li.innerText.toLowerCase().indexOf(searchVal) !== -1) {
+      let p = document.querySelector('.no-results');
+      searched.push(li);
+      //removes message when user deletes search query
+      if (p) {
+         p.remove();
+      }
+   }
+}
 
 //////// HELPER FUNCTIONS /////////
 

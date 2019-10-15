@@ -76,7 +76,7 @@ function paginationDisplay(num) {
    //had the user searched
    numOfLinks !== Math.ceil(arrayGetter().length / 10)? ul.classList.add('search-submitted') : ul.classList.remove('search-submitted');
    //no results after search
-   num === 0? noSearchResults() : '';
+   num = num === 0? noSearchResults() : num;
    //Show proper number of pages for li's
    liList.forEach((li, index) => index < numOfLinks? li.style.display ='' : li.style.display = 'none');
 }
@@ -85,7 +85,9 @@ function noSearchResults() {
    let studentList = document.querySelector('.student-list');
    let p = createElement('p', 'className', 'text-block');
    //wont post multiple p during keyup listener
-   !document.querySelector('.no-results')? fillNoResults(p, studentList): '';
+   if(!document.querySelector('.no-results')) {
+      fillNoResults(p, studentList);
+   }
 }
 function fillNoResults(p, studentList) {
    p.classList.add('no-results');

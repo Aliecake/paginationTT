@@ -34,9 +34,10 @@ function showPage() {
    appendPageLinks(arrayLi, ul);
 }
 
+//This shows the 10 users per page
 function pageSwap(start = 0, arrayLi = arrayGetter()) {
    let finish = start + 9;
-
+   console.log('pageswap firing', start, arrayLi)
    arrayLi.forEach((item, index) => {
       //hides those outside of range selected
       if (index < start || index > finish) {
@@ -82,6 +83,7 @@ function createSearch() {
    button.innerText = "Search";
    form.appendChild(input);
    form.appendChild(button);
+
    input.setAttribute('placeholder', 'Search');
    input.setAttribute('id', 'search-input');
    input.type = 'text';
@@ -95,8 +97,9 @@ document.addEventListener('click', (e) => {
          let start = (parseInt(e.target.innerText) - 1) * 10;
          pageSwap(start);
       } else {
-         //if click is after a search, use searched array
+         //if click is after a search, use searched array instead of default
          let start = (parseInt(e.target.innerText) - 1) * 10;
+         console.log(searchResults)
          pageSwap(start, searchResults);
       }
    }
@@ -107,18 +110,8 @@ document.addEventListener('keyup', (e) => {
    
    const input = document.getElementById('search-input');
    const searchVal = input.value.toLowerCase();
-   let searchResults= searchLis(searchVal);
-
-   if (searchResults.length === 0){
-      noSearchResults();
-   }
-   pageSwap(0, searchResults);
-   paginationDisplay(searchResults.length);
-});
-
-function searchLis(searchVal) {
-   const arrayLi = arrayGetter();
    const searched = [];
+   const arrayLi = arrayGetter();
 
    arrayLi.forEach((li) => {
       if(li.innerText.toLowerCase().indexOf(searchVal) === -1) {
@@ -126,11 +119,22 @@ function searchLis(searchVal) {
       }
       //search results
       if(li.innerText.toLowerCase().indexOf(searchVal) !== -1) {
+         let p = document.querySelector('.no-results');
          searched.push(li);
+         //removes message when user deletes search query
+         if (p){
+            p.remove();
+         }
       }
    });
-   return searched;
-}
+
+   if (searchResults.length === 0){
+      noSearchResults();
+   }
+   searchResults = searched;
+   pageSwap(0, searched);
+   paginationDisplay(searchResults.length);
+});
 
 function noSearchResults() {
    let studentList = document.querySelector('.student-list');
@@ -150,6 +154,8 @@ function paginationDisplay(num) {
    //search results less than num of paginations needed
    if(numOfLinks < Math.ceil(arrayGetter().length / 10)){
       ul.classList.add('search-submitted');
+   } else {
+      ul.classList.remove('search-submitted');
    }
    //Show proper number of pages for li's
    liList.forEach((li, index) => {
